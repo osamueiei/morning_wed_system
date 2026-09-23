@@ -1,0 +1,53 @@
+## GitHub Actions loads workflows from .github/workflows.
+## The active workflow is kept at ../workflows/main.yml.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+    jobs:
+      validate:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Set up Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: 22
+              cache: npm
+              cache-dependency-path: |
+                package-lock.json
+                client/package-lock.json
+                server/package-lock.json
+
+          - name: Install root dependencies
+            run: npm ci
+
+          - name: Install client dependencies
+            working-directory: client
+            run: npm ci
+
+          - name: Install server dependencies
+            working-directory: server
+            run: npm ci --ignore-scripts
+
+          - name: Lint client
+            working-directory: client
+            run: npm run lint
+
+          - name: Build client
+            working-directory: client
+            run: npm run build
+
+          - name: Check server syntax
+            run: node --check server/index.js
+
+          - name: Validate Docker Compose
+            run: docker compose config --quiet
+
+          - name: Build Docker images
+            run: docker compose build
