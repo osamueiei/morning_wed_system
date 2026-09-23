@@ -1,0 +1,30 @@
+// กำหนดตัว generator สำหรับสร้าง Prisma Client
+generator client {
+  provider = "prisma-client-js"
+}
+
+// กำหนดการเชื่อมต่อฐานข้อมูล (ตัวอย่างนี้ใช้ SQLite เพื่อความง่ายในการทดสอบ ไม่ต้องติดตั้งโปรแกรมฐานข้อมูลเพิ่ม)
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ตาราง User สำหรับเก็บข้อมูลผู้ใช้งาน
+model User {
+  id        Int      @id @default(autoincrement()) // รหัสประจำตัว (Primary Key) เพิ่มค่าอัตโนมัติ
+  email     String   @unique                      // อีเมล (ต้องไม่ซ้ำกัน)
+  name      String?                              // ชื่อ (เว้นว่างได้เพราะมีเครื่องหมาย ?)
+  posts     Post[]                               // ความสัมพันธ์: ผู้ใช้ 1 คนมีได้หลายโพสต์
+  createdAt DateTime @default(now())               // บันทึกเวลาที่สร้างข้อมูลอัตโนมัติ
+}
+
+// ตาราง Post สำหรับเก็บข้อมูลบทความ
+model Post {
+  id        Int      @id @default(autoincrement()) // รหัสบทความ
+  title     String                               // หัวข้อบทความ
+  content   String?                              // เนื้อหาบทความ
+  published Boolean  @default(false)              // สถานะการเผยแพร่ (ค่าเริ่มต้นคือยังไม่เผยแพร่)
+  authorId  Int                                  // Foreign Key เชื่อมกับตาราง User
+  author    User     @relation(fields: [authorId], references: [id]) // เชื่อมโยงความสัมพันธ์กับตาราง User
+  createdAt DateTime @default(now())               // เวลาที่สร้างโพสต์
+}

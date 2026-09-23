@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.1.0"
+  },
+  "scripts": {
+    "postinstall": "prisma skills sync || exit 0"
+  }
+}

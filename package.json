@@ -1,0 +1,19 @@
+{
+  "name": "mu-fstk",
+  "private": true,
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "concurrently \"npm run start\" \"cd client && npm run dev\"",
+    "dev:server": "node server/index.js",
+    "dev:client": "cd client && npm run dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.10.0",
+    "cors": "^2.8.6",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "prisma": "^7.10.0"
+  }
+}
